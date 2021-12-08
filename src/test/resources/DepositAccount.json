@@ -1,0 +1,31 @@
+{
+  "type" : "depositAccount",
+  "id" : "100100",
+  "attributes" : {
+    "name" : "Test Test",
+    "createdAt" : "2021-11-13T01:47:54.253Z",
+    "routingNumber" : "021000021",
+    "accountNumber" : "1000117112",
+    "depositProduct" : "checking",
+    "balance" : 518670,
+    "hold" : 0,
+    "available" : 518670,
+    "tags" : { },
+    "currency" : "USD",
+    "status" : "Open"
+  },
+  "relationships" : {
+    "customer" : {
+      "data" : {
+        "type" : "customer",
+        "id" : "100200"
+      }
+    },
+    "org" : {
+      "data" : {
+        "type" : "org",
+        "id" : "100"
+      }
+    }
+  }
+}

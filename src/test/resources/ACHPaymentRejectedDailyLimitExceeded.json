@@ -1,0 +1,39 @@
+{
+  "type" : "achPayment",
+  "id" : "100100",
+  "attributes" : {
+    "createdAt" : "2021-11-22T17:45:41.592Z",
+    "amount" : 5000000,
+    "direction" : "Credit",
+    "description" : "Transfer",
+    "addenda" : "Transfer to external bank account",
+    "counterparty" : {
+      "name" : "Alberta Bobbeth Charleson",
+      "routingNumber" : "021000021",
+      "accountNumber" : "1111222233330000",
+      "accountType" : "Checking"
+    },
+    "status" : "Rejected",
+    "reason" : "DailyACHCreditLimitExceeded"
+  },
+  "relationships" : {
+    "account" : {
+      "data" : {
+        "type" : "account",
+        "id" : "100500"
+      }
+    },
+    "customer" : {
+      "data" : {
+        "type" : "customer",
+        "id" : "100600"
+      }
+    },
+    "customers" : {
+      "data" : [ {
+        "type" : "customer",
+        "id" : "100700"
+      } ]
+    }
+  }
+}

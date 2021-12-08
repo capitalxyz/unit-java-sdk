@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "account.json",
+
+  "definitions": {
+    "depositAccount": {
+      "title": "Deposit Account",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "depositAccount" },
+        "id": { "$ref": "types.json#/definitions/identifier" },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "createdAt": { "type": "string", "format": "date-time" },
+            "name": { "type": "string" },
+            "depositProduct": { "type": "string" },
+            "routingNumber": { "type": "string", "pattern": "^\\d{9}$" },
+            "accountNumber": { "type": "string", "pattern": "^\\d{10,12}$" },
+            "secondaryAccountNumber": {
+              "type": "object",
+              "properties": {
+                "routingNumber": { "type": "string", "pattern": "^\\d{9}$" },
+                "accountNumber": { "type": "string", "pattern": "^\\d{10,12}$" }
+              },
+              "required": [ "routingNumber", "accountNumber" ]
+            },
+            "currency": { "type": "string", "const": "USD" },
+            "balance": { "type": "integer" },
+            "hold": { "type": "integer" },
+            "available": { "type": "integer" },
+            "tags": { "$ref": "tags.json#/definitions/tags" },
+            "status": { "enum": ["Open", "Closed", "Frozen"]},
+            "closeReason": { "enum": ["ByCustomer", "Fraud"]},
+            "freezeReason": { "enum": ["Fraud", "Other"]}
+          },
+          "additionalProperties": false,
+          "required": [ "createdAt", "name", "depositProduct", "routingNumber", "accountNumber", "currency", "balance", "hold", "available", "tags", "status" ]
+        },
+        "relationships": {
+          "type": "object",
+          "properties": {
+            "customer": { "$ref": "customer.json#/definitions/customerLinkage" }
+          },
+          "oneOf": [{
+            "required": [ "customer" ]
+          },{
+            "required": [ "customers" ]
+          }
+          ]
+
+        }
+      },
+      "additionalProperties": false,
+      "required": [ "attributes", "relationships" ]
+    },
+    "glAccount": {
+      "title": "General Ledger Account",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "glAccount" },
+        "id": { "$ref": "types.json#/definitions/identifier" },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "createdAt": { "type": "string", "format": "date-time" },
+            "name": { "type": "string" },
+            "currency": { "type": "string", "const": "USD" },
+            "balance": { "type": "integer" },
+            "hold": { "type": "integer" },
+            "available": { "type": "integer" },
+            "category": { "type": "string", "enum": [ "Asset", "Liability" ] },
+            "status": { "enum": ["Open", "Closed"]},
+            "closeReason": { "enum": ["ByCustomer", "Fraud"]}
+          },
+          "additionalProperties": false,
+          "required": [ "createdAt", "name", "balance", "hold", "available", "category", "currency" ]
+        }
+      }
+    },
+    "batchAccount": {
+      "title": "Batch Account",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "batchAccount" },
+        "id": { "$ref": "types.json#/definitions/identifier" },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "createdAt": { "type": "string", "format": "date-time" },
+            "name": { "type": "string" },
+            "depositProduct": { "type": "string" },
+            "currency": { "type": "string", "const": "USD" },
+            "routingNumber": { "type": "string", "pattern": "^\\d{9}$" },
+            "accountNumber": { "type": "string", "pattern": "^\\d{10,12}$" },
+            "balance": { "type": "integer" },
+            "hold": { "type": "integer" },
+            "available": { "type": "integer" },
+            "status": { "enum": ["Open", "Closed"]},
+            "closeReason": { "enum": ["ByCustomer", "Fraud"]}
+          },
+          "additionalProperties": false,
+          "required": [ "createdAt", "name", "depositProduct", "currency", "routingNumber", "accountNumber", "balance", "hold", "available" ]
+        },
+        "relationships": {
+          "type": "object",
+          "properties": {
+            "org": { "$ref": "types.json#/definitions/orgRelationship" }
+          },
+          "required": [ "org" ]
+        }
+      }
+    },
+    "account": {
+      "title": "Account Resource",
+      "oneOf": [ { "$ref": "#/definitions/depositAccount" }, { "$ref": "#/definitions/glAccount" }, { "$ref": "#/definitions/batchAccount" } ]
+    }
+  },
+  "title": "Account Document",
+  "type": "object",
+  "properties": {
+    "data": { "$ref": "#/definitions/account" }
+  },
+  "required": [ "data" ]
+}

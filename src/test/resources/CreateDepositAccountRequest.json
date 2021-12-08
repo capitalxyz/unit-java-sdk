@@ -1,0 +1,17 @@
+{
+  "data":{
+    "type":"depositAccount",
+    "attributes":{
+      "depositProduct":"test",
+      "idempotencyKey":null
+    },
+    "relationships":{
+      "customer":{
+        "data":{
+          "id":"cow",
+          "type":"moo"
+        }
+      }
+    }
+  }
+}

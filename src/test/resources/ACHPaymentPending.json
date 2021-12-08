@@ -1,0 +1,44 @@
+{
+  "type" : "achPayment",
+  "id" : "100100",
+  "attributes" : {
+    "createdAt" : "2021-11-22T18:19:34.264Z",
+    "amount" : 500,
+    "direction" : "Credit",
+    "description" : "Transfer",
+    "addenda" : "Transfer to external bank account",
+    "counterparty" : {
+      "name" : "Alberta Bobbeth Charleson",
+      "routingNumber" : "021000021",
+      "accountNumber" : "1111222233330000",
+      "accountType" : "Checking"
+    },
+    "status" : "Pending"
+  },
+  "relationships" : {
+    "account" : {
+      "data" : {
+        "type" : "account",
+        "id" : "100200"
+      }
+    },
+    "customer" : {
+      "data" : {
+        "type" : "customer",
+        "id" : "100300"
+      }
+    },
+    "customers" : {
+      "data" : [ {
+        "type" : "customer",
+        "id" : "100400"
+      } ]
+    },
+    "transaction" : {
+      "data" : {
+        "type" : "transaction",
+        "id" : "100500"
+      }
+    }
+  }
+}

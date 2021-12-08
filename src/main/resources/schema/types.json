@@ -1,0 +1,225 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "types.json",
+  "definitions": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[1-9]\\d*$"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^((A[LKSZR])|(C[AOT])|(D[EC])|(F[ML])|(G[AU])|(HI)|(I[DLNA])|(K[SY])|(LA)|(M[EHDAINSOT])|(N[EVHJMYCD])|(MP)|(O[HKR])|(P[WAR])|(RI)|(S[CD])|(T[NX])|(UT)|(V[TIA])|(W[AVIY]))$"
+    },
+    "caState": {
+      "type": "string",
+      "pattern": "^(AB|BC|MB|N[BLTSU]|ON|PE|QC|SK|YT)$"
+    },
+    "usAddress": {
+      "title": "Address",
+      "type": "object",
+      "properties": {
+        "street": { "type": "string", "minLength": 1, "maxLength": 255},
+        "street2": { "type": [ "string", "null" ] },
+        "city": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "state": {"$ref":"#/definitions/state"},
+        "postalCode": { "type": "string", "pattern": "^[0-9]{5}(?:-[0-9]{4})?$" },
+        "country": { "type": "string", "const": "US" }
+      },
+      "additionalProperties": false,
+      "required": [ "street", "city", "postalCode", "country", "state" ]
+    },
+    "caAddress": {
+      "title": "Address",
+      "type": "object",
+      "properties": {
+        "street": { "type": "string", "minLength": 1, "maxLength": 255},
+        "street2": { "type": [ "string", "null" ] },
+        "city": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "state": {"$ref":"#/definitions/caState"},
+        "postalCode": { "type": "string", "pattern": "^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$" },
+        "country": { "type": "string", "const": "CA" }
+      },
+      "additionalProperties": false,
+      "required": [ "street", "city", "postalCode", "country", "state" ]
+    },
+    "internationalAddress": {
+      "title": "Address",
+      "type": "object",
+      "properties": {
+        "street": { "type": "string", "minLength": 1, "maxLength": 255},
+        "street2": { "type": [ "string", "null" ] },
+        "city": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "state": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "maxLength": 255}
+          ]
+        },
+        "postalCode": { "type": "string", "minLength": 1, "maxLength": 20},
+        "country": { "$ref": "#/definitions/countryNoUSCA" }
+      },
+      "additionalProperties": false,
+      "required": [ "street", "city", "postalCode", "country" ]
+    },
+    "address": {
+      "oneOf": [
+        {"$ref": "#/definitions/usAddress"},
+        {"$ref": "#/definitions/caAddress"},
+        {"$ref": "#/definitions/internationalAddress"}
+      ]
+    },
+    "contact": {
+      "title": "Contact",
+      "type": "object",
+      "properties": {
+        "fullName": { "$ref": "#/definitions/fullName" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "$ref": "#/definitions/phone" }
+      },
+      "additionalProperties": false,
+      "required": [ "fullName", "email", "phone" ]
+    },
+    "country": {
+      "type": "string",
+      "pattern": "^(A(D|E|F|G|I|L|M|N|O|R|S|T|Q|U|W|X|Z)|B(A|B|D|E|F|G|H|I|J|L|M|N|O|R|S|T|V|W|Y|Z)|C(A|C|D|F|G|H|I|K|L|M|N|O|R|U|V|X|Y|Z)|D(E|J|K|M|O|Z)|E(C|E|G|H|R|S|T)|F(I|J|K|M|O|R)|G(A|B|D|E|F|G|H|I|L|M|N|P|Q|R|S|T|U|W|Y)|H(K|M|N|R|T|U)|I(D|E|Q|L|M|N|O|R|S|T)|J(E|M|O|P)|K(E|G|H|I|M|N|P|R|W|Y|Z)|L(A|B|C|I|K|R|S|T|U|V|Y)|M(A|C|D|E|F|G|H|K|L|M|N|O|Q|P|R|S|T|U|V|W|X|Y|Z)|N(A|C|E|F|G|I|L|O|P|R|U|Z)|OM|P(A|E|F|G|H|K|L|M|N|R|S|T|W|Y)|QA|R(E|O|S|U|W)|S(A|B|C|D|E|G|H|I|J|K|L|M|N|O|R|T|V|Y|Z)|T(C|D|F|G|H|J|K|L|M|N|O|R|T|V|W|Z)|U(A|G|M|S|Y|Z)|V(A|C|E|G|I|N|U)|W(F|S)|Y(E|T)|Z(A|M|W))$"
+    },
+    "countryNoUSCA": {
+      "type": "string",
+      "pattern": "^(A(D|E|F|G|I|L|M|N|O|R|S|T|Q|U|W|X|Z)|B(A|B|D|E|F|G|H|I|J|L|M|N|O|R|S|T|V|W|Y|Z)|C(C|D|F|G|H|I|K|L|M|N|O|R|U|V|X|Y|Z)|D(E|J|K|M|O|Z)|E(C|E|G|H|R|S|T)|F(I|J|K|M|O|R)|G(A|B|D|E|F|G|H|I|L|M|N|P|Q|R|S|T|U|W|Y)|H(K|M|N|R|T|U)|I(D|E|Q|L|M|N|O|R|S|T)|J(E|M|O|P)|K(E|G|H|I|M|N|P|R|W|Y|Z)|L(A|B|C|I|K|R|S|T|U|V|Y)|M(A|C|D|E|F|G|H|K|L|M|N|O|Q|P|R|S|T|U|V|W|X|Y|Z)|N(A|C|E|F|G|I|L|O|P|R|U|Z)|OM|P(A|E|F|G|H|K|L|M|N|R|S|T|W|Y)|QA|R(E|O|S|U|W)|S(A|B|C|D|E|G|H|I|J|K|L|M|N|O|R|T|V|Y|Z)|T(C|D|F|G|H|J|K|L|M|N|O|R|T|V|W|Z)|U(A|G|M|Y|Z)|V(A|C|E|G|I|N|U)|W(F|S)|Y(E|T)|Z(A|M|W))$"
+    },
+    "fullName": {
+      "title": "Full Name",
+      "type": "object",
+      "properties": {
+        "first": { "type": "string", "minLength": 1, "maxLength": 255},
+        "last": { "type": "string", "minLength": 1, "maxLength": 255 }
+      },
+      "additionalProperties": false,
+      "required": [ "first", "last" ]
+    },
+    "internationalPhone": {
+      "title": "Phone",
+      "type": "object",
+      "properties": {
+        "countryCode": { "type": "string", "pattern": "^(7|(\\d{2,3})|(1\\d{3}))$" },
+        "number": { "type": "string", "pattern": "^\\d+$" }
+      },
+      "additionalProperties": false,
+      "required": [ "countryCode", "number" ]
+    },
+    "usPhone": {
+      "title": "Phone",
+      "type": "object",
+      "properties": {
+        "countryCode": { "type": "string", "pattern": "^1$" },
+        "number": { "type": "string", "pattern": "^\\d{10}$" }
+      },
+      "additionalProperties": false,
+      "required": [ "countryCode", "number" ]
+    },
+    "phone": {
+      "oneOf": [
+        { "$ref": "#/definitions/usPhone" },
+        { "$ref": "#/definitions/internationalPhone" }
+      ]
+    },
+    "orgRelationship": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "types.json#/definitions/identifier" },
+            "type": { "type": "string", "enum": [ "org" ] }
+          },
+          "additionalProperties": false,
+          "required": [ "id", "type" ]
+        }
+      },
+      "additionalProperties": false,
+      "required": ["data" ]
+    },
+    "tags": {
+      "type": "object",
+      "maxProperties": 15,
+      "additionalProperties": {"type": "string", "maxLength": 255, "minLength": 1 },
+      "patternProperties": {
+        "^[a-zA-Z0-9_]{1,128}$":
+        {
+          "type": "string"
+        }
+      }
+    },
+    "coordinates": {
+      "type": "object",
+      "properties": {
+        "longitude": { "type": "number" },
+        "latitude": { "type": "number" }
+      },
+      "additionalProperties": false,
+      "required": [ "longitude", "latitude" ]
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "url": {
+      "type": "string",
+      "pattern": "(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)"
+    },
+    "merchant": {
+      "title": "Merchant",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "integer" },
+        "category": { "type": "string" },
+        "location": { "type": "string" }
+      },
+      "required": [ "name", "type", "category" ],
+      "additionalProperties": false
+    },
+    "plaidProcessorToken": {
+      "type": "string",
+      "pattern": "^processor-.*$",
+      "minLength": 40,
+      "maxLength": 60
+    },
+    "authorizedUser": {
+      "title": "Authorized User",
+      "type": "object",
+      "properties": {
+        "fullName": { "$ref": "types.json#/definitions/fullName" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "$ref": "types.json#/definitions/phone" }
+      },
+      "additionalProperties": false,
+      "required": [ "fullName", "email", "phone" ]
+    },
+    "deviceFingerprint": {
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string", "enum": [ "iovation" ] },
+        "value": { "type": "string" }
+      },
+      "additionalProperties": false,
+      "required": [ "provider", "value" ]
+    },
+    "customersRelationship": {
+      "title": "Customers Relationship",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "$ref": "types.json#/definitions/identifier" },
+              "type": { "type": "string", "const": "customer" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

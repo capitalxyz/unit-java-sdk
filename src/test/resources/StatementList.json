@@ -1,0 +1,21 @@
+[ {
+  "type" : "accountStatementDTO",
+  "id" : "200000",
+  "attributes" : {
+    "period" : "2021-11"
+  },
+  "relationships" : {
+    "customer" : {
+      "data" : {
+        "type" : "customer",
+        "id" : "100100"
+      }
+    },
+    "account" : {
+      "data" : {
+        "type" : "account",
+        "id" : "100200"
+      }
+    }
+  }
+} ]

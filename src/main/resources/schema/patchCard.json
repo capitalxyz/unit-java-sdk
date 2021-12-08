@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "patchCard.json",
+  "definitions": {
+    "patchIndividualDebitCard": {
+      "title": "Patch Individual Debit Card",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "individualDebitCard"
+          ]
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "shippingAddress": {
+              "oneOf": [
+                {"type": "null"},
+                {"$ref": "types.json#/definitions/address"}
+              ]
+            },
+            "design": { "type": "string" },
+            "tags": { "$ref": "tags.json#/definitions/tagsPatch" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "attributes"
+      ]
+    },
+    "patchIndividualVirtualDebitCard": {
+      "title": "Patch Individual Virtual Debit Card",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "individualVirtualDebitCard"
+          ]
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "tags": { "$ref": "tags.json#/definitions/tagsPatch" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "attributes"
+      ]
+    },
+    "patchBusinessDebitCard": {
+      "title": "Patch Business Debit Card",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "businessDebitCard"
+          ]
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "shippingAddress": {
+              "oneOf": [
+                {"type": "null"},
+                {"$ref": "types.json#/definitions/address"}
+              ]
+            },
+            "address": {
+              "$ref": "types.json#/definitions/address"
+            },
+            "phone": {
+              "$ref": "types.json#/definitions/phone"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "design": { "type": "string" },
+            "tags": { "$ref": "tags.json#/definitions/tagsPatch" }
+          },
+          "additionalProperties": false,
+          "required": []
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "attributes"
+      ]
+    },
+    "patchBusinessVirtualDebitCard": {
+      "title": "Patch Business Virtual Debit Card",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "businessVirtualDebitCard"
+          ]
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "$ref": "types.json#/definitions/address"
+            },
+            "phone": {
+              "$ref": "types.json#/definitions/phone"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "tags": { "$ref": "tags.json#/definitions/tagsPatch" }
+          },
+          "additionalProperties": false,
+          "required": []
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "attributes"
+      ]
+    }
+  },
+  "title": "Patch Card",
+  "type": "object",
+  "properties": {
+    "data": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/patchIndividualDebitCard"
+        },
+        {
+          "$ref": "#/definitions/patchIndividualVirtualDebitCard"
+        },
+        {
+          "$ref": "#/definitions/patchBusinessDebitCard"
+        },
+        {
+          "$ref": "#/definitions/patchBusinessVirtualDebitCard"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ]
+}

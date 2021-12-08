@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "createCustomerTokenVerification.json",
+
+  "definitions": {
+    "createCustomerTokenVerification": {
+      "title": "Create Customer Token Verification",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "customerTokenVerification" },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "channel": { "type": "string", "enum": [ "sms", "call" ] },
+            "phone": { "$ref": "types.json#/definitions/phone" },
+            "appHash": { "type": "string", "minLength": 11, "maxLength": 11 },
+            "language": { "type": "string", "enum": [ "en", "es" ] }
+          },
+          "required": [ "channel" ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "attributes"
+      ]
+    }
+  },
+
+  "title": "Create Customer Token Verification",
+  "type": "object",
+  "properties": {
+    "data": { "$ref": "#/definitions/createCustomerTokenVerification" }
+  },
+  "additionalProperties": false,
+  "required": [ "data" ]
+}

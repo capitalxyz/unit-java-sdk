@@ -1,0 +1,21 @@
+{
+  "data": {
+    "type": "achPayment",
+    "attributes": {
+      "amount": 1000,
+      "idempotencyKey": "db36c9c2-f3bb-4499-9aaf-c1d6ec7b161d",
+      "direction": "Debit",
+      "plaidProcessorToken": "unitProcessorToken",
+      "description": "PartyRound",
+      "verifyCounterpartyBalance": true
+    },
+    "relationships": {
+      "account": {
+        "data": {
+          "id": "externalDepositId",
+          "type": "depositAccount"
+        }
+      }
+    }
+  }
+}

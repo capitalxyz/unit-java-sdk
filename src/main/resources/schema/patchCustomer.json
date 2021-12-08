@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "patchCustomer.json",
+
+  "definitions": {
+    "contact": {
+      "title": "Contact",
+      "type": "object",
+      "properties": {
+        "fullName": { "$ref": "types.json#/definitions/fullName" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "$ref": "types.json#/definitions/phone" }
+      },
+      "additionalProperties": false
+    },
+    "patchIndividualCustomer": {
+      "title": "patch Individual Customer",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "individualCustomer" },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "ssn": { "type": [ "string", "null" ], "pattern": "^\\d{9}$" },
+            "passport": { "type": [ "string", "null" ] },
+            "nationality": {
+              "oneOf": [
+                { "$ref": "types.json#/definitions/country" },
+                { "type": "null" }
+              ]
+            },
+            "address": { "$ref": "types.json#/definitions/address" },
+            "dateOfBirth": { "type": "string", "format": "date" },
+            "phone": { "$ref": "types.json#/definitions/phone" },
+            "email": { "type": "string", "format": "email" },
+            "ein": { "type": "string", "pattern": "^\\d{9}$" },
+            "dba": { "type": [ "string", "null" ] },
+            "riskRate": {
+              "type": "string", "enum": [
+                "low", "medium", "high"
+              ]
+            },
+            "tags": { "$ref": "tags.json#/definitions/tagsPatch" },
+            "fullName": { "$ref": "types.json#/definitions/fullName" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "attributes"
+      ]
+    },
+    "patchBusinessCustomer": {
+      "title": "patch Business Customer",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "businessCustomer" },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "phone": {
+              "oneOf": [
+                {"type": "null"},
+                { "$ref": "types.json#/definitions/phone" }
+              ]
+            },
+            "address":{
+              "oneOf": [
+                {"type": "null"},
+                { "$ref": "types.json#/definitions/address" }
+              ]
+            },
+            "contact": { "$ref": "#/definitions/contact" },
+            "ein": { "type": "string", "pattern": "^\\d{9}$" },
+            "dba": { "type": [ "string", "null" ] },
+            "dateOfIncorporation": { "type": "string", "format": "date" },
+            "stateOfIncorporation": { "type": "string", "minLength": 2, "maxLength": 2 },
+            "riskRate": {
+              "type": "string", "enum": [
+                "low", "medium", "high"
+              ]
+            },
+            "tags": { "$ref": "tags.json#/definitions/tagsPatch" },
+            "authorizedUsers": { "type": "array", "items": { "$ref": "types.json#/definitions/authorizedUser" } },
+            "name": { "type": "string", "minLength": 1, "maxLength": 255 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "attributes"
+      ]
+    }
+  },
+
+  "title": "Patch Customer",
+  "type": "object",
+  "properties": {
+    "data": {
+      "oneOf": [
+        { "$ref": "#/definitions/patchIndividualCustomer" },
+        { "$ref": "#/definitions/patchBusinessCustomer" }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "data" ]
+}

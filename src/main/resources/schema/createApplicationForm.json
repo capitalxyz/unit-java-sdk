@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "createApplicationForm.json",
+
+  "definitions": {
+    "prefilled": {
+      "title": "Application Form Prefilled",
+      "type": "object",
+      "properties": {
+        "applicationType": { "type": "string", "enum": [ "Individual", "Business", "SoleProprietorship" ] },
+        "fullName": { "$ref": "types.json#/definitions/fullName" },
+        "ssn": { "type": [ "string" ], "pattern": "^\\d{9}$" },
+        "passport": { "type": [ "string" ] },
+        "nationality": {
+          "oneOf": [
+            { "$ref": "types.json#/definitions/country" },
+            { "type": "null" }
+          ]
+        },
+        "dateOfBirth": { "type": "string", "format": "date" },
+        "email": { "type": "string", "format": "email" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "stateOfIncorporation": { "type": "string", "minLength": 2, "maxLength": 2 },
+        "entityType": { "type": "string", "enum": [ "Corporation", "LLC", "Partnership" ] },
+        "contact": { "$ref": "types.json#/definitions/contact" },
+        "officer": { "$ref": "createApplication.json#/definitions/officer" },
+        "beneficialOwners": { "type": "array", "items": { "$ref": "createApplication.json#/definitions/beneficialOwner" } },
+        "website": {"type": "string"},
+        "phone": { "$ref": "types.json#/definitions/phone" },
+        "address": { "$ref": "types.json#/definitions/address" },
+        "dba": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "ein": { "type": "string", "pattern": "^\\d{9}$" }
+      },
+      "additionalProperties": false
+    },
+    "createApplicationForm": {
+      "title": "Create Application Form",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "applicationForm" },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "email": { "type": "string", "format": "email" },
+            "tags": { "$ref": "tags.json#/definitions/tags" },
+            "applicantDetails": {"$ref": "#/definitions/prefilled"},
+            "allowedApplicationTypes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [ "Individual", "Business", "SoleProprietorship" ]
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ]
+    }
+  },
+
+  "title": "Create Application Form",
+  "type": "object",
+  "properties": {
+    "data": {
+      "oneOf": [
+        { "$ref": "#/definitions/createApplicationForm" }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "data" ]
+}

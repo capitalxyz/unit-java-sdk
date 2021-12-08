@@ -1,0 +1,189 @@
+[
+  {
+    "type": "wireTransaction",
+    "id": "100100",
+    "attributes": {
+      "createdAt": "2021-11-13T20:14:24.627Z",
+      "amount": 520000,
+      "direction": "Credit",
+      "balance": 520000,
+      "summary": "Wire to beneficiary | Wire Payment from Sandbox",
+      "counterparty": {
+        "name": "Sender",
+        "routingNumber": "021000021",
+        "accountNumber": "123456789",
+        "accountType": "Checking"
+      },
+      "description": "Wire Payment from Sandbox"
+    },
+    "relationships": {
+      "account": {
+        "data": {
+          "type": "account",
+          "id": "100200"
+        }
+      },
+      "customer": {
+        "data": {
+          "type": "customer",
+          "id": "100300"
+        }
+      },
+      "customers": {
+        "data": [
+          {
+            "type": "customer",
+            "id": "100400"
+          }
+        ]
+      },
+      "org": {
+        "data": {
+          "type": "org",
+          "id": "100"
+        }
+      }
+    }
+  },
+  {
+    "type": "feeTransaction",
+    "id": "100500",
+    "attributes": {
+      "createdAt": "2021-11-13T20:14:24.627Z",
+      "amount": 5,
+      "direction": "Debit",
+      "balance": 519995,
+      "summary": "Fee for transaction #136802"
+    },
+    "relationships": {
+      "account": {
+        "data": {
+          "type": "account",
+          "id": "100600"
+        }
+      },
+      "customer": {
+        "data": {
+          "type": "customer",
+          "id": "100700"
+        }
+      },
+      "customers": {
+        "data": [
+          {
+            "type": "customer",
+            "id": "100800"
+          }
+        ]
+      },
+      "org": {
+        "data": {
+          "type": "org",
+          "id": "100"
+        }
+      },
+      "relatedTransaction": {
+        "data": {
+          "type": "transaction",
+          "id": "100900"
+        }
+      }
+    }
+  },
+  {
+    "type": "originatedAchTransaction",
+    "id": "138845",
+    "attributes": {
+      "createdAt": "2021-11-16T03:00:06.783Z",
+      "amount": 10000,
+      "direction": "Debit",
+      "balance": 509995,
+      "description": "Test transaction",
+      "summary": "Alberta Bobbeth Charleson  |  Test",
+      "counterparty": {
+        "name": "Alberta Bobbeth Charleson",
+        "routingNumber": "021000021",
+        "accountNumber": "1111222233330000",
+        "accountType": "Checking"
+      }
+    },
+    "relationships": {
+      "account": {
+        "data": {
+          "type": "account",
+          "id": "101000"
+        }
+      },
+      "customer": {
+        "data": {
+          "type": "customer",
+          "id": "101200"
+        }
+      },
+      "customers": {
+        "data": [
+          {
+            "type": "customer",
+            "id": "101200"
+          }
+        ]
+      },
+      "payment": {
+        "data": {
+          "type": "payment",
+          "id": "101300"
+        }
+      },
+      "org": {
+        "data": {
+          "type": "org",
+          "id": "100"
+        }
+      }
+    }
+  },
+  {
+    "type": "receivedAchTransaction",
+    "id": "204876",
+    "attributes": {
+      "createdAt": "2021-12-01T04:45:48.222Z",
+      "amount": 105000,
+      "direction": "Credit",
+      "balance": 105000,
+      "description": "Wrong Transaction",
+      "summary": "SANDBOX  |  Wrong Transaction",
+      "companyName": "SANDBOX",
+      "counterpartyRoutingNumber": "812345678",
+      "secCode": "WEB"
+    },
+    "relationships": {
+      "account": {
+        "data": {
+          "type": "account",
+          "id": "143427"
+        }
+      },
+      "customer": {
+        "data": {
+          "type": "customer",
+          "id": "101200"
+        }
+      },
+      "customers": {
+        "data": [
+          {
+            "type": "customer",
+            "id": "101200"
+          }
+        ]
+      },
+      "org": {
+        "data": {
+          "type": "org",
+          "id": "100"
+        }
+      }
+    }
+  }
+]
+
