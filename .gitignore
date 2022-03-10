@@ -1,1 +1,8 @@
+.idea/
+.ijwb/
+*.iml
 .DS_Store
+
+# bazel
+.ci.bazelrc
+bazel-*
