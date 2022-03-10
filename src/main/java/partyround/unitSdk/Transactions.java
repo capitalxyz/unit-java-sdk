@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import partyround.unit.types.UnitResponse;
 import partyround.unit.types.transactions.Transaction;
 
@@ -129,11 +130,11 @@ public class Transactions {
 
       public abstract Builder setTags(Map<String, String> tags);
 
-      public abstract Builder setSince(Instant since);
+      public abstract Builder setSince(@Nullable Instant since);
 
       public abstract Builder setSince(Optional<Instant> since);
 
-      public abstract Builder setUntil(Instant until);
+      public abstract Builder setUntil(@Nullable Instant until);
 
       public abstract Builder setUntil(Optional<Instant> until);
 

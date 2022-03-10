@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import partyround.unit.types.Direction;
 import partyround.unit.types.Relationship;
 
@@ -47,7 +48,7 @@ public abstract class AdjustmentTransaction {
 
     public abstract Builder setDescription(String description);
 
-    public abstract Builder setTags(Map<String, String> tags);
+    public abstract Builder setTags(@Nullable Map<String, String> tags);
 
     public abstract Builder setTags(Optional<Map<String, String>> tags);
 

@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import partyround.unit.types.Direction;
 import partyround.unit.types.Relationship;
 
@@ -59,7 +60,7 @@ public abstract class ReceivedACHTransaction {
 
     public abstract Builder setDescription(String description);
 
-    public abstract Builder setAddenda(String addenda);
+    public abstract Builder setAddenda(@Nullable String addenda);
 
     public abstract Builder setAddenda(Optional<String> addenda);
 
@@ -67,13 +68,15 @@ public abstract class ReceivedACHTransaction {
 
     public abstract Builder setCounterpartyRoutingNumber(String counterpartyRoutingNumber);
 
+    public abstract Builder setTraceNumber(@Nullable String traceNumber);
+
     public abstract Builder setTraceNumber(Optional<String> traceNumber);
 
-    public abstract Builder setSECCode(String secCode);
+    public abstract Builder setSECCode(@Nullable String secCode);
 
     public abstract Builder setSECCode(Optional<String> secCode);
 
-    public abstract Builder setTags(Map<String, String> tags);
+    public abstract Builder setTags(@Nullable Map<String, String> tags);
 
     public abstract Builder setTags(Optional<Map<String, String>> tags);
 

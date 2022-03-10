@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import partyround.unit.types.Direction;
 import partyround.unit.types.Relationship;
 import partyround.unit.types.transactions.Counterparty;
@@ -47,11 +48,11 @@ public abstract class ACHPayment {
 
     public abstract Builder setCounterparty(Counterparty counterparty);
 
-    public abstract Builder setAddenda(String addenda);
+    public abstract Builder setAddenda(@Nullable String addenda);
 
     public abstract Builder setAddenda(Optional<String> addenda);
 
-    public abstract Builder setSettlementDate(LocalDate settlementDate);
+    public abstract Builder setSettlementDate(@Nullable LocalDate settlementDate);
 
     public abstract Builder setSettlementDate(Optional<LocalDate> settlementDate);
 
@@ -59,7 +60,7 @@ public abstract class ACHPayment {
 
     public abstract Builder setStatus(PaymentStatus paymentStatus);
 
-    public abstract Builder setReason(String reason);
+    public abstract Builder setReason(@Nullable String reason);
 
     public abstract Builder setReason(Optional<String> reason);
 
@@ -69,7 +70,7 @@ public abstract class ACHPayment {
 
     public abstract Builder setAmountInCents(Long amountInCents);
 
-    public abstract Builder setTags(Map<String, String> tags);
+    public abstract Builder setTags(@Nullable Map<String, String> tags);
 
     public abstract Builder setTags(Optional<Map<String, String>> tags);
 

@@ -2,6 +2,7 @@ package partyround.unit.types.transactions;
 
 import com.google.auto.value.AutoValue;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Optional;
 import partyround.unit.types.Direction;
 
@@ -14,15 +15,28 @@ import partyround.unit.types.Direction;
 @AutoValue
 public abstract class Transaction {
   public enum TransactionType {
-    ADJUSTMENT_TRANSACTION,
-    DISHONORED_ACH_TRANSACTION,
-    FEE_TRANSACTION,
-    INTEREST_TRANSACTION,
-    ORIGINATED_ACH_TRANSACTION,
-    RECEIVED_ACH_TRANSACTION,
-    RETURNED_ACH_TRANSACTION,
-    RETURNED_RECEIVED_ACH_TRANSACTION,
-    WIRE_TRANSACTION
+    ADJUSTMENT_TRANSACTION("adjustmentTransaction"),
+    BOOK_TRANSACTION("bookTransaction"),
+    DISHONORED_ACH_TRANSACTION("dishonoredAchTransaction"),
+    FEE_TRANSACTION("feeTransaction"),
+    INTEREST_TRANSACTION("interestTransaction"),
+    ORIGINATED_ACH_TRANSACTION("originatedAchTransaction"),
+    RECEIVED_ACH_TRANSACTION("receivedAchTransaction"),
+    RETURNED_ACH_TRANSACTION("returnedAchTransaction"),
+    RETURNED_RECEIVED_ACH_TRANSACTION("returnedReceivedAchTransaction"),
+    WIRE_TRANSACTION("wireTransaction");
+
+    String value;
+
+    TransactionType(String v) {
+      value = v;
+    }
+
+    public static Optional<TransactionType> fromString(String s) {
+      return Arrays.stream(TransactionType.values())
+          .filter(type -> s.equals(type.value))
+          .findFirst();
+    }
   }
 
   public abstract TransactionType getType();
@@ -96,6 +110,13 @@ public abstract class Transaction {
         .orElseThrow(() -> new IllegalStateException("Transaction is not a WireTransaction"));
   }
 
+  abstract Optional<BookTransaction> getBookTransactionOptional();
+
+  public BookTransaction getBookTransaction() {
+    return getBookTransactionOptional()
+        .orElseThrow(() -> new IllegalStateException("Transaction is not a BookTransaction"));
+  }
+
   public String getId() {
     switch (getType()) {
       case ADJUSTMENT_TRANSACTION:
@@ -116,6 +137,8 @@ public abstract class Transaction {
         return getReturnedReceivedACHTransaction().getId();
       case WIRE_TRANSACTION:
         return getWireTransaction().getId();
+      case BOOK_TRANSACTION:
+        return getBookTransaction().getId();
     }
     throw new IllegalStateException("Transaction is not a known type");
   }
@@ -140,6 +163,8 @@ public abstract class Transaction {
         return getReturnedReceivedACHTransaction().getCreatedAt();
       case WIRE_TRANSACTION:
         return getWireTransaction().getCreatedAt();
+      case BOOK_TRANSACTION:
+        return getBookTransaction().getCreatedAt();
     }
     throw new IllegalStateException("Transaction is not a known type");
   }
@@ -164,6 +189,8 @@ public abstract class Transaction {
         return getReturnedReceivedACHTransaction().getDirection();
       case WIRE_TRANSACTION:
         return getWireTransaction().getDirection();
+      case BOOK_TRANSACTION:
+        return getBookTransaction().getDirection();
     }
     throw new IllegalStateException("Transaction is not a known type");
   }
@@ -188,6 +215,8 @@ public abstract class Transaction {
         return getReturnedReceivedACHTransaction().getAmountInCents();
       case WIRE_TRANSACTION:
         return getWireTransaction().getAmountInCents();
+      case BOOK_TRANSACTION:
+        return getBookTransaction().getAmountInCents();
     }
     throw new IllegalStateException("Transaction is not a known type");
   }
@@ -212,6 +241,8 @@ public abstract class Transaction {
         return getReturnedReceivedACHTransaction().getBalanceInCents();
       case WIRE_TRANSACTION:
         return getWireTransaction().getBalanceInCents();
+      case BOOK_TRANSACTION:
+        return getBookTransaction().getBalanceInCents();
     }
     throw new IllegalStateException("Transaction is not a known type");
   }
@@ -236,6 +267,8 @@ public abstract class Transaction {
         return getReturnedReceivedACHTransaction().getSummary();
       case WIRE_TRANSACTION:
         return getWireTransaction().getSummary();
+      case BOOK_TRANSACTION:
+        return getBookTransaction().getSummary();
     }
     throw new IllegalStateException("Transaction is not a known type");
   }
@@ -269,6 +302,8 @@ public abstract class Transaction {
         ReturnedReceivedACHTransaction transaction);
 
     public abstract Builder setWireTransactionOptional(WireTransaction transaction);
+
+    public abstract Builder setBookTransactionOptional(BookTransaction transaction);
 
     public abstract Transaction build();
   }

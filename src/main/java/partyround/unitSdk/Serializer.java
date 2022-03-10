@@ -27,6 +27,7 @@ import partyround.unit.types.payments.PaymentStatus;
 import partyround.unit.types.payments.WireCounterparty;
 import partyround.unit.types.payments.WirePayment;
 import partyround.unit.types.transactions.AdjustmentTransaction;
+import partyround.unit.types.transactions.BookTransaction;
 import partyround.unit.types.transactions.Counterparty;
 import partyround.unit.types.transactions.DishonoredACHTransaction;
 import partyround.unit.types.transactions.FeeTransaction;
@@ -36,6 +37,7 @@ import partyround.unit.types.transactions.ReceivedACHTransaction;
 import partyround.unit.types.transactions.ReturnedACHTransaction;
 import partyround.unit.types.transactions.ReturnedReceivedACHTransaction;
 import partyround.unit.types.transactions.Transaction;
+import partyround.unit.types.transactions.Transaction.TransactionType;
 import partyround.unit.types.transactions.WireTransaction;
 
 // Serialization functions.
@@ -101,15 +103,21 @@ public class Serializer {
   }
 
   public static String toJson(ApplicationForms.CreateApplicationFormRequest request) {
+    ImmutableMap.Builder<Object, Object> attributes = ImmutableMap.builder();
+
+    request
+        .getApplicantDetails()
+        .ifPresent(applicantDetails -> attributes.put("applicantDetails", toMap(applicantDetails)));
+    request.getTags().ifPresent(tags -> attributes.put("tags", tags));
+    if (!request.getAllowedApplicationTypes().isEmpty()) {
+      attributes.put(
+          "allowedApplicationTypes",
+          request.getAllowedApplicationTypes().stream().map(v -> v.name));
+    }
     return toJsonString(
         ImmutableMap.builder()
             .put("type", "applicationForm")
-            .put(
-                "attributes",
-                ImmutableMap.builder()
-                    .put("applicantDetails", request.getApplicantDetails().map(Serializer::toMap))
-                    .put("tags", request.getTags())
-                    .build())
+            .put("attributes", attributes.build())
             .build());
   }
 
@@ -153,19 +161,20 @@ public class Serializer {
   }
 
   public static String toJson(Payments.CreateVerifiedPaymentRequest request) {
+    ImmutableMap.Builder attributes =
+        ImmutableMap.builder()
+            .put("amount", request.getAmountInCents())
+            .put("direction", request.getDirection().value)
+            .put("idempotencyKey", request.getIdempotencyKey())
+            .put("plaidProcessorToken", request.getPlaidProcessorToken())
+            .put("description", request.getDescription())
+            .put("verifyCounterpartyBalance", request.getVerifyCounterpartyBalance());
+    request.getAddenda().ifPresent(addenda -> attributes.put("addenda", addenda));
+    request.getCounterpartyName().ifPresent(name -> attributes.put("counterpartyName", name));
     return toJsonString(
         ImmutableMap.builder()
             .put("type", "achPayment")
-            .put(
-                "attributes",
-                ImmutableMap.builder()
-                    .put("amount", request.getAmountInCents())
-                    .put("direction", request.getDirection().value)
-                    .put("idempotencyKey", request.getIdempotencyKey())
-                    .put("plaidProcessorToken", request.getPlaidProcessorToken())
-                    .put("description", request.getDescription())
-                    .put("verifyCounterpartyBalance", request.getVerifyCounterpartyBalance())
-                    .build())
+            .put("attributes", attributes.build())
             .put(
                 "relationships",
                 ImmutableMap.builder().put("account", toMap(request.getAccount())).build())
@@ -173,17 +182,20 @@ public class Serializer {
   }
 
   public static String toJson(Payments.CreateBookPaymentRequest request) {
+    ImmutableMap.Builder<Object, Object> attributes =
+        ImmutableMap.builder()
+            .put("amount", request.getAmountInCents())
+            .put("description", request.getDescription())
+            .put("idempotencyKey", request.getIdempotencyKey());
+
+    if (request.getTags().isPresent()) {
+      attributes.put("tags", request.getTags());
+    }
+
     return toJsonString(
         ImmutableMap.builder()
             .put("type", "bookPayment")
-            .put(
-                "attributes",
-                ImmutableMap.builder()
-                    .put("amount", request.getAmountInCents())
-                    .put("description", request.getDescription())
-                    .put("idempotencyKey", request.getIdempotencyKey())
-                    .put("tags", request.getTags())
-                    .build())
+            .put("attributes", attributes.build())
             .put(
                 "relationships",
                 ImmutableMap.builder()
@@ -197,7 +209,7 @@ public class Serializer {
     return UnitResponse.UnitError.ofMessageAndCodeAndDetail(
         jsonNode.get("title").asText(),
         jsonNode.get("status").asText(),
-        jsonNode.get("detail").asText());
+        Optional.ofNullable(jsonNode.get("detail")).map(JsonNode::asText).orElse(""));
   }
 
   public static UnitResponse<JsonNode> toUnitResponse(String in) {
@@ -367,8 +379,9 @@ public class Serializer {
 
   public static Transaction toTransaction(JsonNode jsonNode) {
     String type = jsonNode.get("type").asText();
-    switch (type) {
-      case "adjustmentTransaction":
+    TransactionType transactionType = TransactionType.fromString(type).orElse(null);
+    switch (transactionType) {
+      case ADJUSTMENT_TRANSACTION:
         return Transaction.builder()
             .setAdjustmentTransactionOptional(
                 AdjustmentTransaction.builder()
@@ -386,9 +399,9 @@ public class Serializer {
                             .map(Serializer::toTags))
                     .setAccount(toRelationship(jsonNode.get("relationships").get("account")))
                     .build())
-            .setType(Transaction.TransactionType.ADJUSTMENT_TRANSACTION)
+            .setType(TransactionType.ADJUSTMENT_TRANSACTION)
             .build();
-      case "dishonoredReceivedAchTransaction":
+      case DISHONORED_ACH_TRANSACTION:
         return Transaction.builder()
             .setDishonoredACHTransactionOptional(
                 DishonoredACHTransaction.builder()
@@ -414,9 +427,9 @@ public class Serializer {
                     .setAccount(toRelationship(jsonNode.get("relationships").get("account")))
                     .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
                     .build())
-            .setType(Transaction.TransactionType.DISHONORED_ACH_TRANSACTION)
+            .setType(TransactionType.DISHONORED_ACH_TRANSACTION)
             .build();
-      case "feeTransaction":
+      case FEE_TRANSACTION:
         return Transaction.builder()
             .setFeeTransactionOptional(
                 FeeTransaction.builder()
@@ -437,9 +450,9 @@ public class Serializer {
                         Optional.ofNullable(jsonNode.get("relationships").get("relatedTransaction"))
                             .map(Serializer::toRelationship))
                     .build())
-            .setType(Transaction.TransactionType.FEE_TRANSACTION)
+            .setType(TransactionType.FEE_TRANSACTION)
             .build();
-      case "interestTransaction":
+      case INTEREST_TRANSACTION:
         return Transaction.builder()
             .setInterestTransactionOptional(
                 InterestTransaction.builder()
@@ -457,9 +470,9 @@ public class Serializer {
                     .setAccount(toRelationship(jsonNode.get("relationships").get("account")))
                     .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
                     .build())
-            .setType(Transaction.TransactionType.INTEREST_TRANSACTION)
+            .setType(TransactionType.INTEREST_TRANSACTION)
             .build();
-      case "originatedAchTransaction":
+      case ORIGINATED_ACH_TRANSACTION:
         return Transaction.builder()
             .setOriginatedACHTransactionOptional(
                 OriginatedACHTransaction.builder()
@@ -481,9 +494,9 @@ public class Serializer {
                     .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
                     .setPayment(toRelationship(jsonNode.get("relationships").get("payment")))
                     .build())
-            .setType(Transaction.TransactionType.ORIGINATED_ACH_TRANSACTION)
+            .setType(TransactionType.ORIGINATED_ACH_TRANSACTION)
             .build();
-      case "receivedAchTransaction":
+      case RECEIVED_ACH_TRANSACTION:
         return Transaction.builder()
             .setReceivedACHTransactionOptional(
                 ReceivedACHTransaction.builder()
@@ -514,9 +527,9 @@ public class Serializer {
                     .setAccount(toRelationship(jsonNode.get("relationships").get("account")))
                     .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
                     .build())
-            .setType(Transaction.TransactionType.RECEIVED_ACH_TRANSACTION)
+            .setType(TransactionType.RECEIVED_ACH_TRANSACTION)
             .build();
-      case "returnedAchTransaction":
+      case RETURNED_ACH_TRANSACTION:
         return Transaction.builder()
             .setReturnedACHTransactionOptional(
                 ReturnedACHTransaction.builder()
@@ -541,9 +554,9 @@ public class Serializer {
                     .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
                     .setPayment(toRelationship(jsonNode.get("relationships").get("payment")))
                     .build())
-            .setType(Transaction.TransactionType.RECEIVED_ACH_TRANSACTION)
+            .setType(TransactionType.RETURNED_ACH_TRANSACTION)
             .build();
-      case "returnedReceivedAchTransaction":
+      case RETURNED_RECEIVED_ACH_TRANSACTION:
         return Transaction.builder()
             .setReturnedReceivedACHTransactionOptional(
                 ReturnedReceivedACHTransaction.builder()
@@ -561,9 +574,9 @@ public class Serializer {
                     .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
                     .setReturned(toRelationship(jsonNode.get("relationships").get("returned")))
                     .build())
-            .setType(Transaction.TransactionType.RECEIVED_ACH_TRANSACTION)
+            .setType(TransactionType.RETURNED_RECEIVED_ACH_TRANSACTION)
             .build();
-      case "wireTransaction":
+      case WIRE_TRANSACTION:
         return Transaction.builder()
             .setWireTransactionOptional(
                 WireTransaction.builder()
@@ -584,7 +597,45 @@ public class Serializer {
                     .setAccount(toRelationship(jsonNode.get("relationships").get("account")))
                     .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
                     .build())
-            .setType(Transaction.TransactionType.WIRE_TRANSACTION)
+            .setType(TransactionType.WIRE_TRANSACTION)
+            .build();
+      case BOOK_TRANSACTION:
+        return Transaction.builder()
+            .setBookTransactionOptional(
+                BookTransaction.builder()
+                    .setId(jsonNode.get("id").asText())
+                    .setCreatedAt(
+                        Instant.parse(jsonNode.get("attributes").get("createdAt").asText()))
+                    .setDirection(
+                        Direction.fromString(jsonNode.get("attributes").get("direction").asText()))
+                    .setAmountInCents(jsonNode.get("attributes").get("amount").asLong())
+                    .setBalanceInCents(jsonNode.get("attributes").get("balance").asLong())
+                    .setSummary(jsonNode.get("attributes").get("summary").asText())
+                    .setCounterparty(
+                        toTransactionCounterparty(jsonNode.get("attributes").get("counterparty")))
+                    .setTags(
+                        Optional.ofNullable(jsonNode.get("attributes").get("tags"))
+                            .map(Serializer::toTags))
+                    .setAccount(toRelationship(jsonNode.get("relationships").get("account")))
+                    .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
+                    .setCustomers(
+                        Optional.ofNullable(jsonNode.get("relationships").get("customers"))
+                            .map(
+                                (node) ->
+                                    Streams.stream(node.get("data").elements())
+                                        .map(
+                                            (rel) ->
+                                                Relationship.create(
+                                                    rel.get("type").asText(),
+                                                    rel.get("id").asText()))
+                                        .collect(ImmutableList.toImmutableList())))
+                    .setCounterpartyAccount(
+                        toRelationship(jsonNode.get("relationships").get("counterpartyAccount")))
+                    .setCounterpartyCustomer(
+                        toRelationship(jsonNode.get("relationships").get("counterpartyCustomer")))
+                    .setPayment(toRelationship(jsonNode.get("relationships").get("payment")))
+                    .build())
+            .setType(TransactionType.BOOK_TRANSACTION)
             .build();
       default:
         throw new IllegalStateException("unsupported transaction type: " + type);
@@ -626,19 +677,21 @@ public class Serializer {
             Optional.ofNullable(jsonNode.get("attributes").get("tags")).map(Serializer::toTags))
         .setAccount(toRelationship(jsonNode.get("relationships").get("account")))
         .setCustomer(toRelationship(jsonNode.get("relationships").get("customer")))
-        .setTransaction(toRelationship(jsonNode.get("relationships").get("transaction")))
+        .setTransaction(
+            Optional.ofNullable(jsonNode.get("relationships").get("transaction"))
+                .map(Serializer::toRelationship))
         .build();
   }
 
   public static ImmutableMap<Object, Object> toMap(Address address) {
-    return ImmutableMap.builder()
-        .put("street", address.getStreet())
-        .put("street2", address.getStreet2())
-        .put("city", address.getCity())
-        .put("state", address.getState())
-        .put("postalCode", address.getPostalCode())
-        .put("country", address.getCountry())
-        .build();
+    ImmutableMap.Builder<Object, Object> map = ImmutableMap.builder();
+    map.put("street", address.getStreet());
+    address.getStreet2().ifPresent(v -> map.put("street2", v));
+    map.put("city", address.getCity());
+    address.getState().ifPresent(v -> map.put("state", v));
+    map.put("postalCode", address.getPostalCode());
+    map.put("country", address.getCountry());
+    return map.build();
   }
 
   public static ImmutableMap<Object, Object> toMap(WireCounterparty counterparty) {
@@ -683,23 +736,26 @@ public class Serializer {
   }
 
   public static ImmutableMap<Object, Object> toMap(ApplicationFormPrefill applicationFormPrefill) {
-    return ImmutableMap.builder()
-        .put("applicationType", applicationFormPrefill.getApplicationType())
-        .put("fullName", applicationFormPrefill.getFullName().map(Serializer::toMap))
-        .put("ssn", applicationFormPrefill.getSsn())
-        .put("passport", applicationFormPrefill.getPassport())
-        .put("nationality", applicationFormPrefill.getNationality())
-        .put("dateOfBirth", applicationFormPrefill.getDateOfBirth().map(LocalDate::toString))
-        .put("email", applicationFormPrefill.getEmail())
-        .put("name", applicationFormPrefill.getName())
-        .put("stateOfIncorporation", applicationFormPrefill.getStateOfIncorporation())
-        .put("entityType", applicationFormPrefill.getEntityType())
-        .put("website", applicationFormPrefill.getWebsite())
-        .put("dba", applicationFormPrefill.getDba())
-        .put("ein", applicationFormPrefill.getEin())
-        .put("address", applicationFormPrefill.getAddress().map(Serializer::toMap))
-        .put("phone", applicationFormPrefill.getPhone().map(Serializer::toMap))
-        .build();
+    ImmutableMap.Builder<Object, Object> map = ImmutableMap.builder();
+    map.put("applicationType", applicationFormPrefill.getApplicationType().name);
+    applicationFormPrefill.getFullName().ifPresent(v -> map.put("fullName", Serializer.toMap(v)));
+    applicationFormPrefill.getName().ifPresent(v -> map.put("name", v));
+    applicationFormPrefill.getSsn().ifPresent(v -> map.put("ssn", v));
+    applicationFormPrefill.getPassport().ifPresent(v -> map.put("passport", v));
+    applicationFormPrefill.getNationality().ifPresent(v -> map.put("nationality", v));
+    applicationFormPrefill.getDateOfBirth().ifPresent(v -> map.put("dateOfBirth", v.toString()));
+    applicationFormPrefill.getEmail().ifPresent(v -> map.put("email", v));
+    applicationFormPrefill
+        .getStateOfIncorporation()
+        .ifPresent(v -> map.put("stateOfIncorporation", v));
+    applicationFormPrefill.getEntityType().ifPresent(v -> map.put("entityType", v));
+    applicationFormPrefill.getWebsite().ifPresent(v -> map.put("website", v));
+    applicationFormPrefill.getDba().ifPresent(v -> map.put("dba", v));
+    applicationFormPrefill.getEin().ifPresent(v -> map.put("ein", v));
+    applicationFormPrefill.getAddress().ifPresent(v -> map.put("address", Serializer.toMap(v)));
+    applicationFormPrefill.getPhone().ifPresent(v -> map.put("phone", Serializer.toMap(v)));
+
+    return map.build();
   }
 
   public static BookPayment toBookPayment(JsonNode jsonNode) {
@@ -707,7 +763,6 @@ public class Serializer {
         .setId(jsonNode.get("id").asText())
         .setCreatedAt(Instant.parse(jsonNode.get("attributes").get("createdAt").asText()))
         .setAmountInCents(jsonNode.get("attributes").get("amount").asLong())
-        .setDirection(Direction.fromString(jsonNode.get("attributes").get("direction").asText()))
         .setDescription(jsonNode.get("attributes").get("description").asText())
         .setStatus(PaymentStatus.fromString(jsonNode.get("attributes").get("status").asText()))
         .setReason(
@@ -719,17 +774,22 @@ public class Serializer {
             Optional.ofNullable(jsonNode.get("relationships").get("customer"))
                 .map(Serializer::toRelationship))
         .setCustomers(
-            Optional.ofNullable(jsonNode.get("relationships").get("customer"))
+            Optional.ofNullable(jsonNode.get("relationships").get("customers"))
                 .map(
                     (node) ->
-                        Streams.stream(node.elements())
-                            .map(Serializer::toRelationship)
+                        Streams.stream(node.get("data").elements())
+                            .map(
+                                (rel) ->
+                                    Relationship.create(
+                                        rel.get("type").asText(), rel.get("id").asText()))
                             .collect(ImmutableList.toImmutableList())))
         .setCounterpartyAccount(
             toRelationship(jsonNode.get("relationships").get("counterpartyAccount")))
         .setCounterpartyCustomer(
             toRelationship(jsonNode.get("relationships").get("counterpartyCustomer")))
-        .setTransaction(toRelationship(jsonNode.get("relationships").get("transaction")))
+        .setTransaction(
+            Optional.ofNullable(jsonNode.get("relationships").get("transaction"))
+                .map(Serializer::toRelationship))
         .build();
   }
 }

@@ -1,0 +1,50 @@
+{
+  "type": "bookPayment",
+  "id": "100000",
+  "attributes": {
+    "createdAt": "2022-01-13T23:45:23.005Z",
+    "amount": 1000000,
+    "description": "book payment from account: 100500",
+    "status": "Sent"
+  },
+  "relationships": {
+    "account": {
+      "data": {
+        "type": "account",
+        "id": "100500"
+      }
+    },
+    "customer": {
+      "data": {
+        "type": "customer",
+        "id": "100400"
+      }
+    },
+    "customers": {
+      "data": [
+        {
+          "type": "customer",
+          "id": "100400"
+        }
+      ]
+    },
+    "counterpartyAccount": {
+      "data": {
+        "type": "account",
+        "id": "100300"
+      }
+    },
+    "counterpartyCustomer": {
+      "data": {
+        "type": "customer",
+        "id": "100301"
+      }
+    },
+    "transaction": {
+      "data": {
+        "type": "transaction",
+        "id": "100200"
+      }
+    }
+  }
+}

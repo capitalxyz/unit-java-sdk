@@ -1,6 +1,7 @@
 package partyround.unit;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
@@ -28,6 +29,12 @@ public class Accounts {
     }
 
     public UnitResponse<DepositAccount> executeWith(UnitContext context)
+        throws IOException, InterruptedException {
+      Preconditions.checkState(getIdempotencyKey().isPresent(), "Idempotency key is required");
+      return executeWithoutIdempotencyWith(context);
+    }
+
+    public UnitResponse<DepositAccount> executeWithoutIdempotencyWith(UnitContext context)
         throws IOException, InterruptedException {
       HttpRequest request =
           context

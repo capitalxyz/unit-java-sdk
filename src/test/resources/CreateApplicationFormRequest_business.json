@@ -1,0 +1,21 @@
+{
+  "data": {
+    "type": "applicationForm",
+    "attributes": {
+      "allowedApplicationTypes": ["Business"],
+      "applicantDetails": {
+        "applicationType": "Business",
+        "name": "BizCo Inc",
+        "ein": "123456789",
+        "stateOfIncorporation": "NY",
+        "address": {
+          "street": "123 Biz Street",
+          "city": "New York",
+          "state": "NY",
+          "postalCode": "10003",
+          "country": "US"
+        }
+      }
+    }
+  }
+}

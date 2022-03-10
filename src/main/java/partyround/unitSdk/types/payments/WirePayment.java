@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import partyround.unit.types.Direction;
 import partyround.unit.types.Relationship;
 
@@ -31,7 +32,7 @@ public abstract class WirePayment {
 
   public abstract Relationship getCustomer();
 
-  public abstract Relationship getTransaction();
+  public abstract Optional<Relationship> getTransaction();
 
   public static Builder builder() {
     return new AutoValue_WirePayment.Builder();
@@ -45,7 +46,7 @@ public abstract class WirePayment {
 
     public abstract Builder setStatus(PaymentStatus status);
 
-    public abstract Builder setReason(String reason);
+    public abstract Builder setReason(@Nullable String reason);
 
     public abstract Builder setReason(Optional<String> reason);
 
@@ -57,7 +58,7 @@ public abstract class WirePayment {
 
     public abstract Builder setAmountInCents(Long amountInCents);
 
-    public abstract Builder setTags(Map<String, String> tags);
+    public abstract Builder setTags(@Nullable Map<String, String> tags);
 
     public abstract Builder setTags(Optional<Map<String, String>> tags);
 
@@ -65,7 +66,7 @@ public abstract class WirePayment {
 
     public abstract Builder setCustomer(Relationship customer);
 
-    public abstract Builder setTransaction(Relationship transaction);
+    public abstract Builder setTransaction(Optional<Relationship> transaction);
 
     public abstract WirePayment build();
   }

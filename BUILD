@@ -1,6 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_library")
-load("//jvm/tools/java:defs.bzl", "java_lint")
-load("//jvm/tools/junit5:defs.bzl", "java_junit5_test")
+load("//jvm/tools/java:defs.bzl", "java_junit5_test", "java_lint")
 
 java_library(
     name = "unit_sdk",
@@ -11,6 +10,7 @@ java_library(
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jdk8",
+        "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_guava_guava",
     ],
 )

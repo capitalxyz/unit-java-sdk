@@ -4,6 +4,7 @@ import com.google.auto.value.AutoValue;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 @AutoValue
 public abstract class DepositAccount {
@@ -59,7 +60,7 @@ public abstract class DepositAccount {
 
     public abstract Builder setAvailableInCents(long availableInCents);
 
-    public abstract Builder setTags(Map<String, String> tags);
+    public abstract Builder setTags(@Nullable Map<String, String> tags);
 
     public abstract Builder setTags(Optional<Map<String, String>> tags);
 

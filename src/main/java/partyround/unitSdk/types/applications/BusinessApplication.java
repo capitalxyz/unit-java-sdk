@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import partyround.unit.types.Address;
 import partyround.unit.types.Phone;
 import partyround.unit.types.Relationship;
@@ -71,6 +72,8 @@ public abstract class BusinessApplication {
     public abstract Builder setOrg(Relationship org);
 
     public abstract Builder setDocuments(List<Relationship> documents);
+
+    public abstract Builder setCustomer(@Nullable Relationship customer);
 
     public abstract Builder setCustomer(Optional<Relationship> customer);
 

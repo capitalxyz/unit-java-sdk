@@ -1,11 +1,13 @@
 package partyround.unit;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import partyround.unit.types.ACHCounterparty;
 import partyround.unit.types.Direction;
 import partyround.unit.types.Relationship;
@@ -36,6 +38,12 @@ public class Payments {
 
     public UnitResponse<BookPayment> executeWith(UnitContext context)
         throws IOException, InterruptedException {
+      Preconditions.checkState(getIdempotencyKey().isPresent(), "Idempotency key is required");
+      return executeWithoutIdempotencyWith(context);
+    }
+
+    public UnitResponse<BookPayment> executeWithoutIdempotencyWith(UnitContext context)
+        throws IOException, InterruptedException {
       HttpRequest request =
           context
               .newRequestBuilderForPath("payments")
@@ -52,7 +60,9 @@ public class Payments {
 
       public abstract Builder setDescription(String description);
 
-      public abstract Builder setIdempotencyKey(String idempotencyKey);
+      public abstract Builder setIdempotencyKey(@Nullable String idempotencyKey);
+
+      public abstract Builder setIdempotencyKey(Optional<String> idempotencyKey);
 
       public abstract Builder setTags(Map<String, String> tags);
 
@@ -98,7 +108,9 @@ public class Payments {
 
       public abstract Builder setAddenda(String addenda);
 
-      public abstract Builder setIdempotencyKey(String idempotencyKey);
+      public abstract Builder setIdempotencyKey(@Nullable String idempotencyKey);
+
+      public abstract Builder setIdempotencyKey(Optional<String> idempotencyKey);
 
       public abstract Builder setTags(Map<String, String> tags);
 
@@ -138,9 +150,13 @@ public class Payments {
 
       public abstract Builder setDescription(String description);
 
-      public abstract Builder setAddenda(String addenda);
+      public abstract Builder setAddenda(@Nullable String addenda);
 
-      public abstract Builder setIdempotencyKey(String idempotencyKey);
+      public abstract Builder setAddenda(Optional<String> addenda);
+
+      public abstract Builder setIdempotencyKey(@Nullable String idempotencyKey);
+
+      public abstract Builder setIdempotencyKey(Optional<String> idempotencyKey);
 
       public abstract Builder setTags(Map<String, String> tags);
 
@@ -160,6 +176,8 @@ public class Payments {
 
     public abstract String getDescription();
 
+    public abstract Optional<String> getAddenda();
+
     public abstract Optional<String> getIdempotencyKey();
 
     public abstract Optional<String> getCounterpartyName();
@@ -175,6 +193,12 @@ public class Payments {
     }
 
     public UnitResponse<ACHPayment> executeWith(UnitContext context)
+        throws IOException, InterruptedException {
+      Preconditions.checkState(getIdempotencyKey().isPresent(), "Idempotency key is required");
+      return executeWithoutIdempotencyWith(context);
+    }
+
+    public UnitResponse<ACHPayment> executeWithoutIdempotencyWith(UnitContext context)
         throws IOException, InterruptedException {
       HttpRequest request =
           context
@@ -194,9 +218,17 @@ public class Payments {
 
       public abstract Builder setDescription(String description);
 
-      public abstract Builder setIdempotencyKey(String idempotencyKey);
+      public abstract Builder setAddenda(@Nullable String addenda);
 
-      public abstract Builder setCounterpartyName(String counterpartyName);
+      public abstract Builder setAddenda(Optional<String> addenda);
+
+      public abstract Builder setIdempotencyKey(@Nullable String idempotencyKey);
+
+      public abstract Builder setIdempotencyKey(Optional<String> idempotencyKey);
+
+      public abstract Builder setCounterpartyName(@Nullable String counterpartyName);
+
+      public abstract Builder setCounterpartyName(Optional<String> counterpartyName);
 
       public abstract Builder setPlaidProcessorToken(String plaidProcessorToken);
 
@@ -228,6 +260,12 @@ public class Payments {
 
     public UnitResponse<WirePayment> executeWith(UnitContext context)
         throws IOException, InterruptedException {
+      Preconditions.checkState(getIdempotencyKey().isPresent(), "Idempotency key is required");
+      return executeWithoutIdempotencyWith(context);
+    }
+
+    public UnitResponse<WirePayment> executeWithoutIdempotencyWith(UnitContext context)
+        throws IOException, InterruptedException {
       HttpRequest request =
           context
               .newRequestBuilderForPath("payments")
@@ -246,11 +284,11 @@ public class Payments {
 
       public abstract Builder setCounterparty(WireCounterparty counterparty);
 
-      public abstract Builder setIdempotencyKey(String idempotencyKey);
+      public abstract Builder setIdempotencyKey(@Nullable String idempotencyKey);
 
       public abstract Builder setIdempotencyKey(Optional<String> idempotencyKey);
 
-      public abstract Builder setTags(Map<String, String> tags);
+      public abstract Builder setTags(@Nullable Map<String, String> tags);
 
       public abstract Builder setTags(Optional<Map<String, String>> tags);
 

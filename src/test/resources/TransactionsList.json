@@ -1,5 +1,68 @@
 [
   {
+    "type": "bookTransaction",
+    "id": "2396328",
+    "attributes": {
+      "createdAt": "2022-01-07T08:35:50.737Z",
+      "amount": 100,
+      "direction": "Debit",
+      "balance": 0,
+      "summary": "Foundational Inc  |  book payment from account: 266917",
+      "counterparty": {
+        "name": "Foundational Inc",
+        "routingNumber": "021000021",
+        "accountNumber": "123456789",
+        "accountType": "Checking"
+      }
+    },
+    "relationships": {
+      "account": {
+        "data": {
+          "type": "account",
+          "id": "100200"
+        }
+      },
+      "customer": {
+        "data": {
+          "type": "customer",
+          "id": "100300"
+        }
+      },
+      "customers": {
+        "data": [
+          {
+            "type": "customer",
+            "id": "100300"
+          }
+        ]
+      },
+      "payment": {
+        "data": {
+          "type": "payment",
+          "id": "101300"
+        }
+      },
+      "counterpartyAccount": {
+        "data": {
+          "type": "account",
+          "id": "101500"
+        }
+      },
+      "counterpartyCustomer": {
+        "data": {
+          "type": "customer",
+          "id": "101600"
+        }
+      },
+      "org": {
+        "data": {
+          "type": "org",
+          "id": "1"
+        }
+      }
+    }
+  },
+  {
     "type": "wireTransaction",
     "id": "100100",
     "attributes": {

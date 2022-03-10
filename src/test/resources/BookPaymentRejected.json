@@ -1,0 +1,45 @@
+{
+  "type": "bookPayment",
+  "id": "100000",
+  "attributes": {
+    "createdAt": "2022-02-15T23:45:22.691Z",
+    "amount": 1000000,
+    "description": "book payment from account: 100200",
+    "status": "Rejected",
+    "reason": "InsufficientFunds"
+  },
+  "relationships": {
+    "account": {
+      "data": {
+        "type": "account",
+        "id": "100200"
+      }
+    },
+    "customer": {
+      "data": {
+        "type": "customer",
+        "id": "100300"
+      }
+    },
+    "customers": {
+      "data": [
+        {
+          "type": "customer",
+          "id": "100300"
+        }
+      ]
+    },
+    "counterpartyAccount": {
+      "data": {
+        "type": "account",
+        "id": "100400"
+      }
+    },
+    "counterpartyCustomer": {
+      "data": {
+        "type": "customer",
+        "id": "100500"
+      }
+    }
+  }
+}

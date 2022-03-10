@@ -5,7 +5,7 @@ public enum ApplicationType {
   SOLE_PROPRIETORSHIP("SoleProprietorship"),
   BUSINESS("Business");
 
-  final String name;
+  public final String name;
 
   ApplicationType(String name) {
     this.name = name;

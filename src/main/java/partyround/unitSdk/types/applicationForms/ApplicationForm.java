@@ -3,6 +3,7 @@ package partyround.unit.types.applicationForms;
 import com.google.auto.value.AutoValue;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 @AutoValue
 public abstract class ApplicationForm {
@@ -23,6 +24,8 @@ public abstract class ApplicationForm {
     public abstract Builder setStage(ApplicationFormStage stage);
 
     public abstract Builder setUrl(String url);
+
+    public abstract Builder setApplicantDetails(@Nullable ApplicationFormPrefill applicantDetails);
 
     public abstract Builder setApplicantDetails(Optional<ApplicationFormPrefill> applicantDetails);
 
