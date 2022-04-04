@@ -1,0 +1,17 @@
+{
+  "type": "applicationForm",
+  "id": "1234",
+  "attributes": {
+    "tags": {},
+    "url": "https://application-form.co/TESTURL",
+    "stage": "BusinessApplicationCreated"
+  },
+  "relationships": {
+    "application": {
+      "data": {
+        "type": "application",
+        "id": "12345"
+      }
+    }
+  }
+}

@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import partyround.unit.types.Relationship;
 import partyround.unit.types.UnitResponse;
+import partyround.unit.types.accounts.CloseAccountFraudReason;
+import partyround.unit.types.accounts.CloseAccountReason;
 import partyround.unit.types.accounts.DepositAccount;
 
 public class Accounts {
@@ -57,6 +59,42 @@ public class Accounts {
       public abstract Builder setCustomer(Relationship customer);
 
       public abstract CreateDepositAccountRequest build();
+    }
+  }
+
+  @AutoValue
+  public abstract static class CloseDepositAccountRequest {
+    public abstract String getId();
+
+    public abstract Optional<CloseAccountReason> getReason();
+
+    public abstract Optional<CloseAccountFraudReason> getFraudReason();
+
+    public static Builder builder() {
+      return new AutoValue_Accounts_CloseDepositAccountRequest.Builder();
+    }
+
+    public UnitResponse<DepositAccount> executeWith(UnitContext context)
+        throws IOException, InterruptedException {
+      HttpRequest request =
+          context
+              .newRequestBuilderForPath(String.format("accounts/%s/close", getId()))
+              .GET()
+              .build();
+      HttpResponse<String> response =
+          context.getHttpClient().send(request, BodyHandlers.ofString());
+      return Serializer.toUnitResponse(response.body()).map(Serializer::toDepositAccount);
+    }
+
+    @AutoValue.Builder
+    public abstract static class Builder {
+      public abstract Builder setId(String id);
+
+      public abstract Builder setReason(CloseAccountReason reason);
+
+      public abstract Builder setFraudReason(CloseAccountFraudReason fraudReason);
+
+      public abstract CloseDepositAccountRequest build();
     }
   }
 

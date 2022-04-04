@@ -1,0 +1,9 @@
+{
+  "data":{
+    "type":"accountClose",
+    "attributes":{
+      "reason": "Fraud",
+      "fraudReason": "AccountActivity"
+    }
+  }
+}
