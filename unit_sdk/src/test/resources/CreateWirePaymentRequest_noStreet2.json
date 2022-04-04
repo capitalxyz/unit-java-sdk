@@ -1,0 +1,31 @@
+{
+  "data":{
+    "type":"wirePayment",
+    "attributes": {
+      "amount": 200,
+      "idempotencyKey": "db36c9c2-f3bb-4499-9aaf-c1d6ec7b161d",
+      "direction": "Credit",
+      "description": "PartyRound",
+      "counterparty": {
+        "name": "Test Person",
+        "routingNumber": "021000021",
+        "accountNumber": "1000000001",
+        "address": {
+          "street": "20 Ingram St",
+          "city": "Forest Hills",
+          "state": "CA",
+          "postalCode": "11375",
+          "country": "US"
+        }
+      }
+    },
+    "relationships": {
+      "account": {
+        "data": {
+          "type": "depositAccount",
+          "id": "143427"
+        }
+      }
+    }
+  }
+}

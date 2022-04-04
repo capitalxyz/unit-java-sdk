@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import partyround.unit.types.*;
 import partyround.unit.types.accounts.AccountStatus;
+import partyround.unit.types.accounts.CloseAccountFraudReason;
+import partyround.unit.types.accounts.CloseAccountReason;
 import partyround.unit.types.accounts.DepositAccount;
 import partyround.unit.types.applicationForms.ApplicationForm;
 import partyround.unit.types.applicationForms.ApplicationFormPrefill;
@@ -141,6 +143,25 @@ public class Serializer {
             .build());
   }
 
+  public static String toJson(Accounts.CloseDepositAccountRequest request) {
+    ImmutableMap.Builder<Object, Object> attributes = ImmutableMap.builder();
+
+    if (request.getReason().isPresent()) {
+      CloseAccountReason reason = request.getReason().get();
+      attributes.put("reason", reason.reason);
+      if (reason == CloseAccountReason.FRAUD && request.getFraudReason().isPresent()) {
+        CloseAccountFraudReason fraudReason = request.getFraudReason().get();
+        attributes.put("fraudReason", fraudReason.reason);
+      }
+    }
+
+    return toJsonString(
+        ImmutableMap.builder()
+            .put("type", "accountClose")
+            .put("attributes", attributes.build())
+            .build());
+  }
+
   public static String toJson(ACHCounterparties.CreateACHCounterpartyRequest request) {
     return toJsonString(
         ImmutableMap.builder()
@@ -244,7 +265,10 @@ public class Serializer {
             ApplicationFormStage.fromString(jsonNode.get("attributes").get("stage").asText())
                 .orElseThrow(() -> new IllegalStateException("invalid application stage")))
         .setUrl(jsonNode.get("attributes").get("url").asText())
-        // TODO: deserialize the rest of the fields.
+        .setApplication(
+            Optional.ofNullable(jsonNode.at("/relationships/application"))
+                .filter(node -> !node.isMissingNode())
+                .map(Serializer::toRelationship))
         .build();
   }
 
@@ -643,14 +667,19 @@ public class Serializer {
   }
 
   public static Address toAddress(JsonNode jsonNode) {
-    return Address.builder()
-        .setStreet(jsonNode.get("street").asText())
-        .setStreet2(jsonNode.get("street2").asText())
-        .setCity(jsonNode.get("city").asText())
-        .setState(jsonNode.get("state").asText())
-        .setPostalCode(jsonNode.get("postalCode").asText())
-        .setCountry(jsonNode.get("country").asText())
-        .build();
+    Address.Builder builder =
+        Address.builder()
+            .setStreet(jsonNode.get("street").asText())
+            .setCity(jsonNode.get("city").asText())
+            .setState(jsonNode.get("state").asText())
+            .setPostalCode(jsonNode.get("postalCode").asText())
+            .setCountry(jsonNode.get("country").asText());
+
+    if (jsonNode.get("street2") != null) {
+      builder.setStreet2(jsonNode.get("street2").asText());
+    }
+
+    return builder.build();
   }
 
   public static WireCounterparty toWireCounterparty(JsonNode jsonNode) {

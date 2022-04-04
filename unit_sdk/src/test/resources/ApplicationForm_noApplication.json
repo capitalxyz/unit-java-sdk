@@ -1,0 +1,25 @@
+{
+  "type": "applicationForm",
+  "id": "7739",
+  "attributes": {
+    "tags": {},
+    "url": "https://application-form.co/TESTURL",
+    "stage": "EnterBusinessInformation",
+    "applicantDetails": {
+      "applicationType": "Business",
+      "name": "CanopyCo Inc",
+      "stateOfIncorporation": "DE",
+      "ein": "471915187",
+      "address": {
+        "street": "123 Main St",
+        "city": "Bonita",
+        "state": "CA",
+        "postalCode": "91902",
+        "country": "US"
+      }
+    },
+    "allowedApplicationTypes": [
+      "Business"
+    ]
+  }
+}
